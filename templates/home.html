@@ -5,6 +5,7 @@
 <link href="/css/app.css" rel="stylesheet" />
 </head>
 <body>
+	{{define "_header.html"}}
 	<header class="row">
 		<div class="columns small-2">
 			<div class="logo-container">
@@ -38,6 +39,8 @@
 			</div>
 		</div>
 	</header>
+	{{end}}
+	{{template "_header.html"}}
 	<div class="main-menu">
 		<div class="row">
 			<div class="columns small-12 text-center">
