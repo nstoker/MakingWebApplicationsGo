@@ -26,12 +26,7 @@ func main() {
 	controller.Startup(templates)
 
 	log.Printf("Starting up on :%s", port)
-	http.ListenAndServe(
-		":"+port,
-		&middleware.TimeoutMiddleware{
-			new(middleware.GzipMiddleware),
-		},
-	)
+	http.ListenAndServeTLS(":"+port, "cert.pem", "key.pem", &middleware.TimeoutMiddleware{new(middleware.GzipMiddleware)})
 }
 
 func readEnvironmentVariables() (string, string, string) {
