@@ -8,6 +8,7 @@ import (
 	"text/template"
 
 	"github.com/joho/godotenv"
+	"github.com/nstoker/MakingWebApplicationsGo/src/viewmodel"
 )
 
 func main() {
@@ -20,9 +21,16 @@ func main() {
 	templates := populateTemplates()
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		requestedFile := r.URL.Path[1:]
+		var context interface{}
+		switch requestedFile {
+		case "shop":
+			context = viewmodel.NewShop()
+		default:
+			context = viewmodel.NewBase()
+		}
 		t := templates[requestedFile+".html"]
 		if t != nil {
-			err := t.Execute(w, nil)
+			err := t.Execute(w, context)
 			if err != nil {
 				log.Println(err)
 			}
