@@ -1,21 +1,40 @@
 package controller
 
 import (
+	"html/template"
 	"net/http"
-	"text/template"
+	"regexp"
+	"strconv"
 
+	"github.com/nstoker/MakingWebApplicationsGo/src/model"
 	"github.com/nstoker/MakingWebApplicationsGo/src/viewmodel"
 )
 
 type shop struct {
-	shopTemplate *template.Template
+	shopTemplate     *template.Template
+	categoryTemplate *template.Template
 }
 
 func (s shop) registerRoutes() {
-	http.HandleFunc("/shop", s.handleshop)
+	http.HandleFunc("/shop", s.handleShop)
+	http.HandleFunc("/shop/", s.handleShop)
 }
 
-func (s shop) handleshop(w http.ResponseWriter, r *http.Request) {
-	vm := viewmodel.NewShop()
-	s.shopTemplate.Execute(w, vm)
+func (s shop) handleShop(w http.ResponseWriter, r *http.Request) {
+	categoryPattern, _ := regexp.Compile(`/shop/(\d+)`)
+	matches := categoryPattern.FindStringSubmatch(r.URL.Path)
+	if len(matches) > 0 {
+		categoryID, _ := strconv.Atoi(matches[1])
+		s.handleCategory(w, r, categoryID)
+	} else {
+		categories := model.GetCategories()
+		vm := viewmodel.NewShop(categories)
+		s.shopTemplate.Execute(w, vm)
+	}
+}
+
+func (s shop) handleCategory(w http.ResponseWriter, r *http.Request, categoryID int) {
+	products := model.GetProductsForCategory(categoryID)
+	vm := viewmodel.NewShopDetail(products)
+	s.categoryTemplate.Execute(w, vm)
 }

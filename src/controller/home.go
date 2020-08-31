@@ -1,8 +1,8 @@
 package controller
 
 import (
+	"html/template"
 	"net/http"
-	"text/template"
 
 	"github.com/nstoker/MakingWebApplicationsGo/src/viewmodel"
 )
@@ -12,11 +12,12 @@ type home struct {
 }
 
 func (h home) registerRoutes() {
-	http.HandleFunc("/home", h.handleHome)
 	http.HandleFunc("/", h.handleHome)
+	http.HandleFunc("/home", h.handleHome)
 }
 
 func (h home) handleHome(w http.ResponseWriter, r *http.Request) {
 	vm := viewmodel.NewHome()
+	w.Header().Add("Content-Type", "text/html")
 	h.homeTemplate.Execute(w, vm)
 }

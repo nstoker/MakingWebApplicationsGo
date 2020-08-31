@@ -1,28 +1,19 @@
 package main
 
 import (
+	"html/template"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
-	"text/template"
 
-	"github.com/joho/godotenv"
 	"github.com/nstoker/MakingWebApplicationsGo/src/controller"
 )
 
 func main() {
-	godotenv.Load(".env")
-	port := os.Getenv("PORT")
-	if port == "" {
-		log.Fatalf("PORT missing")
-	}
-
 	templates := populateTemplates()
 	controller.Startup(templates)
 
-	log.Printf("Listening on %s", port)
-	http.ListenAndServe(":"+port, nil)
+	http.ListenAndServe(":8000", nil)
 }
 
 func populateTemplates() map[string]*template.Template {

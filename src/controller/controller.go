@@ -1,8 +1,8 @@
 package controller
 
 import (
+	"html/template"
 	"net/http"
-	"text/template"
 )
 
 var (
@@ -10,10 +10,11 @@ var (
 	shopController shop
 )
 
-// Startup startup the controller
-func Startup(template map[string]*template.Template) {
-	homeController.homeTemplate = template["home.html"]
-	shopController.shopTemplate = template["shop.html"]
+// Startup the controller
+func Startup(templates map[string]*template.Template) {
+	homeController.homeTemplate = templates["home.html"]
+	shopController.shopTemplate = templates["shop.html"]
+	shopController.categoryTemplate = templates["shop_details.html"]
 
 	homeController.registerRoutes()
 	shopController.registerRoutes()
