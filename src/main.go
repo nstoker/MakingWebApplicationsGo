@@ -8,7 +8,7 @@ import (
 	"text/template"
 
 	"github.com/joho/godotenv"
-	"github.com/nstoker/MakingWebApplicationsGo/src/viewmodel"
+	"github.com/nstoker/MakingWebApplicationsGo/src/controller"
 )
 
 func main() {
@@ -19,28 +19,7 @@ func main() {
 	}
 
 	templates := populateTemplates()
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		requestedFile := r.URL.Path[1:]
-		var context interface{}
-		switch requestedFile {
-		case "shop":
-			context = viewmodel.NewShop()
-		default:
-			context = viewmodel.NewBase()
-		}
-		t := templates[requestedFile+".html"]
-		if t != nil {
-			err := t.Execute(w, context)
-			if err != nil {
-				log.Println(err)
-			}
-		} else {
-			w.WriteHeader(http.StatusNotFound)
-		}
-	})
-
-	http.Handle("/img/", http.FileServer(http.Dir("public")))
-	http.Handle("/css/", http.FileServer(http.Dir("public")))
+	controller.Startup(templates)
 
 	log.Printf("Listening on %s", port)
 	http.ListenAndServe(":"+port, nil)
