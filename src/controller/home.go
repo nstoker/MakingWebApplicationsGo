@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/nstoker/MakingWebApplicationsGo/src/model"
 	"github.com/nstoker/MakingWebApplicationsGo/src/viewmodel"
 )
 
@@ -34,10 +35,11 @@ func (h home) handleLogin(w http.ResponseWriter, r *http.Request) {
 		}
 		email := r.Form.Get("email")
 		password := r.Form.Get("password")
-		if email == "test@gmail.com" && password == "password" {
+		if _, err := model.Login(email, password); err == nil {
 			http.Redirect(w, r, "/home", http.StatusTemporaryRedirect)
 			return
 		} else {
+			log.Printf("User '%v' failed to log in %v", email, err)
 			vm.Email = email
 			vm.Password = password
 		}

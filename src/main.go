@@ -1,26 +1,68 @@
 package main
 
 import (
+	"database/sql"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/nstoker/MakingWebApplicationsGo/src/controller"
 	"github.com/nstoker/MakingWebApplicationsGo/src/middleware"
+	"github.com/nstoker/MakingWebApplicationsGo/src/model"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
+	dsn, port, salt := readEnvironmentVariables()
+	model.SetPasswordSalt(salt)
 	templates := populateTemplates()
+	db := connectToDatabase(dsn)
+	defer db.Close()
+
 	controller.Startup(templates)
+
+	log.Printf("Starting up on :%s", port)
 	http.ListenAndServe(
-		":8000",
+		":"+port,
 		&middleware.TimeoutMiddleware{
 			new(middleware.GzipMiddleware),
 		},
 	)
 }
 
+func readEnvironmentVariables() (string, string, string) {
+	godotenv.Load(".env")
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatalln("$PORT missing")
+	}
+	dsn := os.Getenv("DATABASE_URL")
+	if dsn == "" {
+		log.Fatalln("$DATABASE_URL missing")
+	}
+	salt := os.Getenv("PASSWORD_SALT")
+	if salt == "" {
+		log.Fatalln("$PASSWORD_SALT missing")
+	}
+	if port == "" || dsn == "" {
+		log.Panicf("Check $PORT '%s' and $DATABASE_URL '%s'", port, dsn)
+	}
+
+	return dsn, port, salt
+}
+
+func connectToDatabase(dsn string) *sql.DB {
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	model.SetDatabase(db)
+	return db
+}
 func populateTemplates() map[string]*template.Template {
 	result := make(map[string]*template.Template)
 	const basePath = "templates"
