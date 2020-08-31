@@ -6,14 +6,12 @@ import (
 	"github.com/nstoker/MakingWebApplicationsGo/src/model"
 )
 
-// Shop struct
 type Shop struct {
 	Title      string
 	Active     string
 	Categories []Category
 }
 
-// Category struct
 type Category struct {
 	URL           string
 	ImageURL      string
@@ -22,7 +20,6 @@ type Category struct {
 	IsOrientRight bool
 }
 
-// NewShop create an instance of a new shop
 func NewShop(categories []model.Category) Shop {
 	result := Shop{
 		Title:  "Lemonade Stand Supply - Shop",

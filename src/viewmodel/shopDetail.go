@@ -1,6 +1,8 @@
 package viewmodel
 
-import "github.com/nstoker/MakingWebApplicationsGo/src/model"
+import (
+	"github.com/nstoker/MakingWebApplicationsGo/src/model"
+)
 
 type ShopDetail struct {
 	Title    string
@@ -15,7 +17,7 @@ func NewShopDetail(products []model.Product) ShopDetail {
 		Products: []Product{},
 	}
 	for _, p := range products {
-		result.Products = append(result.Products, productToVM(p))
+		result.Products = append(result.Products, productToVM(&p))
 	}
 	return result
 }
