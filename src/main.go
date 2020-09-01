@@ -13,6 +13,8 @@ import (
 	"github.com/nstoker/MakingWebApplicationsGo/src/middleware"
 	"github.com/nstoker/MakingWebApplicationsGo/src/model"
 
+	_ "net/http/pprof"
+
 	_ "github.com/lib/pq"
 )
 
@@ -24,7 +26,7 @@ func main() {
 	defer db.Close()
 
 	controller.Startup(templates)
-
+	go http.ListenAndServe(":8080", nil)
 	log.Printf("Starting up on :%s", port)
 	http.ListenAndServeTLS(":"+port, "cert.pem", "key.pem", &middleware.TimeoutMiddleware{new(middleware.GzipMiddleware)})
 }
