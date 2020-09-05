@@ -55,7 +55,7 @@ func Login(email, password string) (*User, error) {
 	SET lastlogin = $1
 	WHERE id = $2`, t, result.ID)
 	if err != nil {
-		log.Printf("Failed to update loging time for user %v to %v: %v", result.Email, t, err)
+		log.Printf("Failed to update login time for user %v to %v: %v", result.Email, t, err)
 	}
 	log.Printf("User %d logged in as %s at %v", result.ID, result.Email, t)
 	return result, nil
