@@ -21,6 +21,6 @@ func TestLoginSendsCorrectPasswordHash(t *testing.T) {
 	pwd := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
 
 	if testDB.lastArgs[1] != pwd {
-		t.Errorf("Login function failed to send correct password has to database")
+		t.Errorf("Login function failed to send correct password hash to database")
 	}
 }
